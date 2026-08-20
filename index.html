@@ -1296,7 +1296,7 @@
                     </a-entity>
 
                     <!-- Active Zone Banner -->
-                    <a-text id="vr-hud-zone-text" value="AERODYN VR DRIVER ACTIVE" align="center" position="0 0.18 0.02" color="#00ff88" width="2.2" font="mozillavr"></a-text>
+                    <a-text id="vr-hud-zone-text" value="RIGHT HAND: DRIVE | LEFT HAND: BRAKE" align="center" position="0 0.18 0.02" color="#00ff88" width="2.2" font="mozillavr"></a-text>
                 </a-entity>
             </a-entity>
         </a-scene>
@@ -1614,7 +1614,7 @@
             </div>
 
             <div style="font-family:var(--font-tech); font-size:0.85rem; color:var(--text-muted);">
-                <span style="color:var(--cyan)">VR:</span> RIGHT TRIGGER = GAS &bull; LEFT TRIGGER = BRAKE &bull; THUMBSTICK = STEER &bull; <kbd style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:3px; color:#fff;">W A S D</kbd> TO DRIVE
+                <span style="color:var(--green); font-weight:700;">🎮 VR CONTROLS:</span> <span style="color:#fff; font-weight:700;">RIGHT HAND CLICK = DRIVE 🚀</span> &bull; <span style="color:#ff3366; font-weight:700;">LEFT HAND CLICK = BRAKE 🛑</span> &bull; THUMBSTICK = STEER &bull; <kbd style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:3px; color:#fff;">W A S D</kbd>
             </div>
         </footer>
 
@@ -1643,14 +1643,14 @@
 
         <!-- Drive Controls Guide -->
         <div id="drive-controls-guide">
-            <div style="color:var(--cyan); font-weight:700; margin-bottom:2px;">🎮 VR & KEYBOARD CONTROLS</div>
-            <div><kbd>RT</kbd> / <kbd>W</kbd> Throttle</div>
-            <div><kbd>LT</kbd> / <kbd>S</kbd> Brake & Reverse</div>
-            <div><kbd>Stick</kbd> / <kbd>A</kbd><kbd>D</kbd> Steer</div>
-            <div><kbd>Grip</kbd> / <kbd>SPACE</kbd> Handbrake</div>
-            <div><kbd>A</kbd> / <kbd>C</kbd> Camera View</div>
-            <div><kbd>B</kbd> / <kbd>M</kbd> VR Quick Menu</div>
-            <div><kbd>Y</kbd> / <kbd>R</kbd> Reset Vehicle</div>
+            <div style="color:var(--cyan); font-weight:700; margin-bottom:2px;">🎮 VR DRIVING CONTROLS</div>
+            <div style="color:#00ff88; font-weight:700;"><kbd>RIGHT HAND</kbd> Click / Trigger / Button A &rarr; DRIVE 🚀</div>
+            <div style="color:#ff3366; font-weight:700;"><kbd>LEFT HAND</kbd> Click / Trigger / Button X &rarr; BRAKE 🛑</div>
+            <div><kbd>Thumbstick</kbd> &rarr; Steer Left / Right</div>
+            <div><kbd>Left Grip</kbd> &rarr; Handbrake / Drift</div>
+            <div><kbd>Button B</kbd> &rarr; Toggle Camera View</div>
+            <div><kbd>Button Y</kbd> &rarr; Reset Vehicle</div>
+            <div style="margin-top:4px; font-size:0.75rem; color:#8e9bb0;"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Keyboard Supported</div>
         </div>
 
         <!-- VR Toast Alert -->
@@ -2141,19 +2141,90 @@
         };
 
         /* =========================================================================
-           4. VR CONTROLLER DRIVING & HAPTIC SYSTEM (Meta Quest 3S / WebXR Gamepads)
+           4. VR CONTROLLER DRIVING & HAPTIC SYSTEM (Right = Drive, Left = Brake)
            ========================================================================= */
         const VRControllerSystem = {
             btnAPressed: false,
             btnBPressed: false,
             btnXPressed: false,
             btnYPressed: false,
+            rightHandDriveActive: false,
+            leftHandBrakeActive: false,
             floatingMenuVisible: false,
+
+            initListeners: function () {
+                const rightCtrl = document.getElementById('right-controller');
+                const leftCtrl = document.getElementById('left-controller');
+
+                if (rightCtrl) {
+                    // Right Hand: Trigger / A-Button / Grip -> Drive forward
+                    ['triggerdown', 'abuttondown', 'gripdown', 'buttondown'].forEach(evt => {
+                        rightCtrl.addEventListener(evt, () => {
+                            if (activeLocation !== 'showroom') {
+                                this.rightHandDriveActive = true;
+                                this.triggerHaptic(this.getRightGamepad(), 0.3, 35);
+                            }
+                        });
+                    });
+                    ['triggerup', 'abuttonup', 'gripup', 'buttonup'].forEach(evt => {
+                        rightCtrl.addEventListener(evt, () => {
+                            this.rightHandDriveActive = false;
+                        });
+                    });
+
+                    // Right Button B -> Toggle Camera view / VR Quick Menu
+                    rightCtrl.addEventListener('bbuttondown', () => {
+                        setCameraView(currentCameraView === 'first' ? 'third' : 'first');
+                        this.triggerHaptic(this.getRightGamepad(), 0.4, 30);
+                    });
+                }
+
+                if (leftCtrl) {
+                    // Left Hand: Trigger / X-Button / Grip -> Brake / Reverse
+                    ['triggerdown', 'xbuttondown', 'gripdown', 'buttondown'].forEach(evt => {
+                        leftCtrl.addEventListener(evt, () => {
+                            if (activeLocation !== 'showroom') {
+                                this.leftHandBrakeActive = true;
+                                this.triggerHaptic(this.getLeftGamepad(), 0.4, 40);
+                            }
+                        });
+                    });
+                    ['triggerup', 'xbuttonup', 'gripup', 'buttonup'].forEach(evt => {
+                        leftCtrl.addEventListener(evt, () => {
+                            this.leftHandBrakeActive = false;
+                        });
+                    });
+
+                    // Left Button Y -> Reset Vehicle Position
+                    leftCtrl.addEventListener('ybuttondown', () => {
+                        resetVehiclePosition();
+                        this.triggerHaptic(this.getLeftGamepad(), 0.6, 50);
+                    });
+                }
+            },
+
+            getRightGamepad: function () {
+                const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+                for (let i = 0; i < gamepads.length; i++) {
+                    const gp = gamepads[i];
+                    if (gp && gp.connected && (gp.hand === 'right' || (gp.id && gp.id.toLowerCase().includes('right')) || i === 1)) return gp;
+                }
+                return null;
+            },
+
+            getLeftGamepad: function () {
+                const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+                for (let i = 0; i < gamepads.length; i++) {
+                    const gp = gamepads[i];
+                    if (gp && gp.connected && (gp.hand === 'left' || (gp.id && gp.id.toLowerCase().includes('left')) || i === 0)) return gp;
+                }
+                return null;
+            },
 
             pollInputs: function () {
                 const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-                let vrThrottle = 0;
-                let vrBrake = 0;
+                let vrThrottle = this.rightHandDriveActive ? 1.0 : 0.0;
+                let vrBrake = this.leftHandBrakeActive ? 1.0 : 0.0;
                 let vrSteer = 0;
                 let vrHandbrake = false;
                 let leftGp = null;
@@ -2171,37 +2242,36 @@
                     }
                 }
 
-                // Process Right Controller (Throttle, Steer, Actions)
+                // =============================================================
+                // RIGHT HAND CONTROLLER (DRIVE / ACCELERATION / STEERING)
+                // =============================================================
                 if (rightGp) {
-                    // Trigger -> Analog Throttle
-                    if (rightGp.buttons[0] && rightGp.buttons[0].value > 0.05) {
-                        vrThrottle = Math.max(vrThrottle, rightGp.buttons[0].value);
+                    // Right Trigger (Index button) -> Drive!
+                    if (rightGp.buttons[0] && (rightGp.buttons[0].pressed || rightGp.buttons[0].value > 0.05)) {
+                        vrThrottle = Math.max(vrThrottle, rightGp.buttons[0].value > 0.15 ? rightGp.buttons[0].value : 1.0);
                     }
-                    // Thumbstick Y (Forward Throttle)
+                    // Right Button A (Main face button) -> Drive!
+                    if (rightGp.buttons[4] && rightGp.buttons[4].pressed) {
+                        vrThrottle = 1.0;
+                    }
+                    // Right Thumbstick click -> Drive!
+                    if (rightGp.buttons[3] && rightGp.buttons[3].pressed) {
+                        vrThrottle = 1.0;
+                    }
+                    // Right Thumbstick Y forward -> Drive!
                     const stickY = rightGp.axes[3] !== undefined ? rightGp.axes[3] : (rightGp.axes[1] || 0);
-                    if (stickY < -0.2) {
+                    if (stickY < -0.25) {
                         vrThrottle = Math.max(vrThrottle, -stickY);
                     }
-                    // Thumbstick X (Steer)
+                    // Right Thumbstick X -> Steering
                     const stickX = rightGp.axes[2] !== undefined ? rightGp.axes[2] : (rightGp.axes[0] || 0);
-                    if (Math.abs(stickX) > 0.15) {
+                    if (Math.abs(stickX) > 0.12) {
                         vrSteer = stickX;
                     }
-                    // Grip -> Handbrake
-                    if (rightGp.buttons[1] && rightGp.buttons[1].value > 0.4) {
-                        vrHandbrake = true;
-                    }
-                    // Button A -> Cam Toggle (edge triggered)
-                    if (rightGp.buttons[4] && rightGp.buttons[4].pressed && !this.btnAPressed) {
-                        setCameraView(currentCameraView === 'first' ? 'third' : 'first');
-                        this.triggerHaptic(rightGp, 0.4, 30);
-                        this.btnAPressed = true;
-                    } else if (rightGp.buttons[4] && !rightGp.buttons[4].pressed) {
-                        this.btnAPressed = false;
-                    }
-                    // Button B -> Toggle Floating VR Menu
+
+                    // Right Button B (Secondary button) -> Toggle Camera view
                     if (rightGp.buttons[5] && rightGp.buttons[5].pressed && !this.btnBPressed) {
-                        this.toggleFloatingMenu();
+                        setCameraView(currentCameraView === 'first' ? 'third' : 'first');
                         this.triggerHaptic(rightGp, 0.4, 30);
                         this.btnBPressed = true;
                     } else if (rightGp.buttons[5] && !rightGp.buttons[5].pressed) {
@@ -2209,35 +2279,38 @@
                     }
                 }
 
-                // Process Left Controller (Brake, Steer, Actions)
+                // =============================================================
+                // LEFT HAND CONTROLLER (BRAKE / REVERSE / STEERING)
+                // =============================================================
                 if (leftGp) {
-                    // Trigger -> Analog Brake
-                    if (leftGp.buttons[0] && leftGp.buttons[0].value > 0.05) {
-                        vrBrake = Math.max(vrBrake, leftGp.buttons[0].value);
+                    // Left Trigger (Index button) -> Brake!
+                    if (leftGp.buttons[0] && (leftGp.buttons[0].pressed || leftGp.buttons[0].value > 0.05)) {
+                        vrBrake = Math.max(vrBrake, leftGp.buttons[0].value > 0.15 ? leftGp.buttons[0].value : 1.0);
                     }
-                    // Thumbstick Y (Down = Brake/Reverse)
+                    // Left Button X (Main face button) -> Brake!
+                    if (leftGp.buttons[4] && leftGp.buttons[4].pressed) {
+                        vrBrake = 1.0;
+                    }
+                    // Left Thumbstick click -> Brake!
+                    if (leftGp.buttons[3] && leftGp.buttons[3].pressed) {
+                        vrBrake = 1.0;
+                    }
+                    // Left Thumbstick Y backward -> Brake / Reverse!
                     const stickY = leftGp.axes[3] !== undefined ? leftGp.axes[3] : (leftGp.axes[1] || 0);
-                    if (stickY > 0.2) {
+                    if (stickY > 0.25) {
                         vrBrake = Math.max(vrBrake, stickY);
                     }
-                    // Thumbstick X (Steer)
+                    // Left Thumbstick X -> Steering (if right stick not active)
                     const stickX = leftGp.axes[2] !== undefined ? leftGp.axes[2] : (leftGp.axes[0] || 0);
-                    if (Math.abs(stickX) > 0.15 && Math.abs(vrSteer) < 0.15) {
+                    if (Math.abs(stickX) > 0.12 && Math.abs(vrSteer) < 0.12) {
                         vrSteer = stickX;
                     }
-                    // Grip -> Handbrake
+                    // Left Grip -> Handbrake / Drift
                     if (leftGp.buttons[1] && leftGp.buttons[1].value > 0.4) {
                         vrHandbrake = true;
                     }
-                    // Button X -> Horn
-                    if (leftGp.buttons[4] && leftGp.buttons[4].pressed && !this.btnXPressed) {
-                        soundSynth.playHorn();
-                        this.triggerHaptic(leftGp, 0.6, 50);
-                        this.btnXPressed = true;
-                    } else if (leftGp.buttons[4] && !leftGp.buttons[4].pressed) {
-                        this.btnXPressed = false;
-                    }
-                    // Button Y -> Reset Vehicle Position
+
+                    // Left Button Y (Secondary button) -> Reset Vehicle Position
                     if (leftGp.buttons[5] && leftGp.buttons[5].pressed && !this.btnYPressed) {
                         resetVehiclePosition();
                         this.triggerHaptic(leftGp, 0.5, 40);
@@ -2707,15 +2780,15 @@
             if (throttle > 0.05 && brake === 0) {
                 const powerRatio = Math.max(0.1, 1 - (physics.speedMS / topSpeedMS));
                 physics.speedMS += maxTorqueAccel * throttle * powerRatio * dt;
-                if (vr.rightGp && Math.random() < 0.2) {
-                    VRControllerSystem.triggerHaptic(vr.rightGp, 0.15 * throttle, 20);
+                if (vr.rightGp && Math.random() < 0.25) {
+                    VRControllerSystem.triggerHaptic(vr.rightGp, 0.2 * throttle, 25);
                 }
             } else if (brake > 0.05) {
                 if (physics.speedMS > 0.5) {
                     physics.speedMS = Math.max(0, physics.speedMS - (18 * brakeBoost) * brake * dt);
                     physics.brakeTemp = Math.min(350, physics.brakeTemp + 0.5);
                     soundSynth.triggerSkid(0.15);
-                    if (vr.leftGp) VRControllerSystem.triggerHaptic(vr.leftGp, 0.3 * brake, 25);
+                    if (vr.leftGp) VRControllerSystem.triggerHaptic(vr.leftGp, 0.35 * brake, 30);
                 } else {
                     physics.speedMS = Math.max(-8, physics.speedMS - 4 * dt);
                 }
@@ -3578,15 +3651,16 @@
                 // WebXR VR Mode Listeners
                 scene.addEventListener('enter-vr', () => {
                     inVRMode = true;
-                    showToast("🥽 ENTERED VR MODE: Laser Controls Active");
+                    showToast("🥽 VR MODE: RIGHT HAND = DRIVE | LEFT HAND = BRAKE");
                 });
 
                 scene.addEventListener('exit-vr', () => {
                     inVRMode = false;
-                    showToast("🖥️ EXITED VR MODE: Desktop Controls Restored");
+                    showToast("🖥️ DESKTOP MODE: WASD / Arrow Keys Restored");
                 });
             }
 
+            VRControllerSystem.initListeners();
             buildVRWorkshopKiosk();
             selectVehicle('moto_superbike');
             initInfiniteCityRoad();
