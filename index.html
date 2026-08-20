@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AeroDyn 3D | Virtual Vehicle Engineering & Performance Lab</title>
+    <title>AeroDyn 3D | Virtual Vehicle Engineering & Performance Lab (VR & Desktop)</title>
     <meta name="description"
-        content="Interactive 3D Vehicle Modification and Performance Simulation for Desktop and Meta Quest 3S VR. Modify parts, observe physics, test drive, and learn automotive engineering.">
+        content="Interactive 3D & VR Vehicle Modification, Dynamics and Performance Simulation for Desktop and Meta Quest 3S / WebXR. Modify parts, observe real-world physics, drive in VR cockpit, and master automotive engineering.">
 
     <!-- A-Frame 1.6.0 for WebXR and 3D Rendering -->
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
@@ -128,6 +128,12 @@
             padding: 2px 7px;
             border-radius: 4px;
             letter-spacing: 1px;
+        }
+
+        .badge-vr {
+            background: rgba(255, 183, 3, 0.15);
+            border-color: var(--amber);
+            color: var(--amber);
         }
 
         .vehicle-selector-group {
@@ -449,10 +455,6 @@
         }
 
         .stat-row {
-            background: rgba(15, 22, 35, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-            padding: 6px 10px;
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -460,33 +462,30 @@
 
         .stat-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-tech);
+            font-size: 0.85rem;
         }
 
         .stat-label {
-            font-family: var(--font-tech);
-            font-size: 0.85rem;
-            font-weight: 600;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
         .stat-values {
-            font-family: var(--font-display);
-            font-size: 0.85rem;
-            font-weight: 700;
             display: flex;
-            align-items: center;
             gap: 6px;
+            align-items: baseline;
         }
 
         .stat-val-curr {
             color: #fff;
+            font-weight: 700;
         }
 
         .stat-val-delta {
-            font-family: var(--font-tech);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
         }
 
@@ -601,48 +600,57 @@
         .tool-btn {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
+            color: #cbd5e1;
             font-family: var(--font-tech);
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
-            padding: 5px 10px;
+            padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
+            gap: 6px;
+            transition: all 0.2s ease;
         }
 
         .tool-btn:hover {
-            color: #fff;
-            border-color: var(--cyan);
-        }
-
-        .tool-btn.active {
             background: rgba(0, 243, 255, 0.15);
             border-color: var(--cyan);
             color: var(--cyan);
-            box-shadow: 0 0 10px var(--cyan-glow);
         }
 
-        /* Active Driving Speedometer HUD */
+        .tool-btn.active {
+            background: var(--cyan);
+            border-color: var(--cyan);
+            color: #05070d;
+            font-weight: 800;
+            box-shadow: 0 0 14px var(--cyan-glow);
+        }
+
+        /* Active Driving Speedometer Cluster */
         #driving-hud {
             position: absolute;
-            bottom: 75px;
+            bottom: 74px;
             left: 50%;
             transform: translateX(-50%);
             display: none;
             align-items: center;
-            gap: 20px;
-            background: rgba(10, 15, 25, 0.88);
+            gap: 16px;
+            background: rgba(6, 10, 18, 0.92);
             backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--cyan);
+            box-shadow: 0 0 30px var(--cyan-glow), inset 0 0 15px rgba(0, 243, 255, 0.2);
+            border-radius: 16px;
             padding: 10px 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px var(--cyan-glow);
-            pointer-events: auto;
             z-index: 20;
+            pointer-events: none;
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px var(--cyan-glow); }
+            100% { box-shadow: 0 0 35px var(--cyan-glow), inset 0 0 20px rgba(0, 243, 255, 0.3); }
         }
 
         #driving-hud.visible {
@@ -650,28 +658,31 @@
         }
 
         .gauge-unit {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
         }
 
         .speedo-num {
             font-family: var(--font-display);
-            font-size: 2.6rem;
+            font-size: 2.4rem;
             font-weight: 900;
             color: #fff;
             line-height: 1;
-            text-shadow: 0 0 15px var(--cyan-glow);
+            text-shadow: 0 0 15px var(--cyan);
         }
 
         .speedo-label {
             font-family: var(--font-tech);
             font-size: 0.75rem;
             font-weight: 700;
-            letter-spacing: 2px;
             color: var(--cyan);
+            letter-spacing: 1.5px;
         }
 
         .tach-num {
-            font-family: var(--font-display);
+            font-family: var(--font-mono);
             font-size: 1.6rem;
             font-weight: 700;
             color: var(--amber);
@@ -680,7 +691,7 @@
 
         .tach-label {
             font-family: var(--font-tech);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: var(--amber);
             letter-spacing: 1px;
@@ -688,55 +699,59 @@
 
         .gear-num {
             font-family: var(--font-display);
-            font-size: 2.0rem;
+            font-size: 1.8rem;
             font-weight: 900;
             color: var(--green);
             line-height: 1;
+            text-shadow: 0 0 10px rgba(0, 245, 155, 0.5);
         }
 
         .drive-telemetry {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 2px;
             font-family: var(--font-tech);
             font-size: 0.8rem;
-            border-left: 1px solid rgba(255, 255, 255, 0.15);
-            padding-left: 14px;
-            min-width: 130px;
+            color: var(--text-muted);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 12px;
         }
 
         .telemetry-row {
             display: flex;
             justify-content: space-between;
+            gap: 10px;
         }
 
-        /* Drive Controls Key Guide */
+        .telemetry-row b {
+            color: #fff;
+            font-family: var(--font-mono);
+        }
+
+        /* Driving Controls Guide Overlay */
         #drive-controls-guide {
             position: absolute;
-            top: 75px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(10, 15, 25, 0.88);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            top: 76px;
+            right: 16px;
+            background: rgba(10, 15, 26, 0.88);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 6px 14px;
+            padding: 8px 12px;
             font-family: var(--font-tech);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
             display: none;
-            align-items: center;
-            gap: 14px;
-            z-index: 20;
-            pointer-events: auto;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 15;
+            pointer-events: none;
         }
 
         #drive-controls-guide kbd {
             background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            padding: 2px 5px;
             color: #fff;
+            padding: 1px 5px;
+            border-radius: 3px;
             font-weight: 700;
         }
 
@@ -909,6 +924,28 @@
                 grid-template-columns: 280px 1fr 290px;
             }
         }
+
+        /* WebXR VR Mode Styling */
+        .a-enter-vr {
+            position: fixed !important;
+            bottom: 60px !important;
+            right: 18px !important;
+            z-index: 9999 !important;
+        }
+
+        .a-enter-vr-button {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.4), rgba(0, 100, 255, 0.25)) !important;
+            border: 2px solid var(--cyan) !important;
+            border-radius: 28px !important;
+            box-shadow: 0 0 25px var(--cyan-glow), inset 0 0 10px rgba(0, 243, 255, 0.4) !important;
+            backdrop-filter: blur(12px) !important;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        .a-enter-vr-button:hover {
+            transform: scale(1.12) !important;
+            box-shadow: 0 0 35px var(--cyan), inset 0 0 15px var(--cyan) !important;
+        }
     </style>
 </head>
 
@@ -918,7 +955,7 @@
     <!-- A-FRAME 3D SCENE CONTAINER                                                -->
     <!-- ========================================================================= -->
     <div id="scene-container">
-        <a-scene cursor="rayOrigin: mouse; fuse: false" raycaster="objects: .clickable; interval: 25;"
+        <a-scene cursor="rayOrigin: mouse; fuse: false" raycaster="objects: .clickable; interval: 20;"
             renderer="antialias: true; colorManagement: true; highRefreshRate: true; foveationLevel: 2;"
             vr-mode-ui="enabled: true" loading-screen="dotsColor: #00f3ff; backgroundColor: #05070d"
             background="color: #05070d" shadow="type: pcfsoft">
@@ -939,15 +976,51 @@
             <a-entity id="rig" position="0 1.2 4.2">
                 <a-camera id="main-camera" look-controls="pointerLockEnabled: false" wasd-controls="enabled: false"
                     position="0 0 0">
-                    <a-ring id="vr-vignette" position="0 0 -0.5" radius-inner="0.35" radius-outer="1.2"
+                    <a-ring id="vr-vignette" position="0 0 -0.5" radius-inner="0.32" radius-outer="1.3"
                         material="color: #000; opacity: 0; transparent: true; shader: flat" visible="true"></a-ring>
+
+                    <!-- IN-VR FLOATING QUICK-ACTIONS MENU (Follows Camera in VR when summoned) -->
+                    <a-entity id="vr-floating-menu" position="0 -0.42 -0.9" rotation="-20 0 0" visible="false">
+                        <a-plane width="1.1" height="0.34" material="color: #05070d; opacity: 0.94; transparent: true; roughness: 0.2">
+                            <a-ring position="0 0 0.005" radius-inner="0.52" radius-outer="0.53" material="color: #00f3ff; shader: flat; opacity: 0.8"></a-ring>
+                            <a-text value="⚡ VR QUICK ACTIONS" align="center" position="0 0.11 0.02" color="#00f3ff" width="2.4" font="mozillavr"></a-text>
+
+                            <!-- Cam Toggle -->
+                            <a-entity class="clickable vr-quick-btn" position="-0.38 -0.02 0.02"
+                                geometry="primitive: plane; width: 0.22; height: 0.12" material="color: #1e293b"
+                                onclick="setCameraView(currentCameraView === 'first' ? 'third' : 'first')">
+                                <a-text value="📷 CAM" align="center" position="0 0 0.01" color="#00f3ff" width="2.0" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <!-- Reset Position -->
+                            <a-entity class="clickable vr-quick-btn" position="-0.13 -0.02 0.02"
+                                geometry="primitive: plane; width: 0.22; height: 0.12" material="color: #1e293b"
+                                onclick="resetVehiclePosition()">
+                                <a-text value="🔄 RESET" align="center" position="0 0 0.01" color="#ffffff" width="2.0" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <!-- Horn -->
+                            <a-entity class="clickable vr-quick-btn" position="0.13 -0.02 0.02"
+                                geometry="primitive: plane; width: 0.22; height: 0.12" material="color: #1e293b"
+                                onclick="soundSynth.playHorn()">
+                                <a-text value="📯 HORN" align="center" position="0 0 0.01" color="#ffb703" width="2.0" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <!-- Garage / Track Return -->
+                            <a-entity id="vr-btn-quick-mode" class="clickable vr-quick-btn" position="0.38 -0.02 0.02"
+                                geometry="primitive: plane; width: 0.22; height: 0.12" material="color: #00f3ff"
+                                onclick="handleAction('switchLocation', activeLocation === 'showroom' ? 'track' : 'showroom')">
+                                <a-text id="vr-btn-quick-mode-text" value="🏢 GARAGE" align="center" position="0 0 0.01" color="#05070d" width="2.0" font="mozillavr"></a-text>
+                            </a-entity>
+                        </a-plane>
+                    </a-entity>
                 </a-camera>
 
-                <!-- VR Laser Touch Controls for Meta Quest 3S -->
-                <a-entity id="left-controller" oculus-touch-controls="hand: left" laser-controls="hand: left"
-                    raycaster="objects: .clickable; showLine: true; lineColor: #00f3ff"></a-entity>
-                <a-entity id="right-controller" oculus-touch-controls="hand: right" laser-controls="hand: right"
-                    raycaster="objects: .clickable; showLine: true; lineColor: #ff0055"></a-entity>
+                <!-- VR Laser Touch Controls for Meta Quest 3S / Quest 2 / PCVR -->
+                <a-entity id="left-controller" oculus-touch-controls="hand: left; model: true" laser-controls="hand: left"
+                    raycaster="objects: .clickable; showLine: true; lineColor: #00f3ff; far: 12; interval: 20"></a-entity>
+                <a-entity id="right-controller" oculus-touch-controls="hand: right; model: true" laser-controls="hand: right"
+                    raycaster="objects: .clickable; showLine: true; lineColor: #ff0055; far: 12; interval: 20"></a-entity>
             </a-entity>
 
             <a-sky id="sky-dome" color="#05070d"></a-sky>
@@ -980,6 +1053,117 @@
                 <!-- Garage Accent Pillars -->
                 <a-cylinder position="-10 4 -10" radius="0.4" height="8" material="color: #1e293b"></a-cylinder>
                 <a-cylinder position="10 4 -10" radius="0.4" height="8" material="color: #1e293b"></a-cylinder>
+
+                <!-- ================================================================= -->
+                <!-- 3D VR SPATIAL WORKSHOP TERMINAL KIOSK (Interactive in VR & Desktop) -->
+                <!-- ================================================================= -->
+                <a-entity id="vr-workshop-kiosk" position="-2.7 0 1.1" rotation="0 52 0">
+                    <!-- Kiosk Base & Pedestal Ring -->
+                    <a-cylinder position="0 0.04 0" radius="1.7" height="0.08" material="color: #0a0f1d; metalness: 0.8; roughness: 0.2">
+                        <a-ring position="0 0.045 0" rotation="-90 0 0" radius-inner="1.5" radius-outer="1.58"
+                            material="color: #00f3ff; shader: flat; opacity: 0.8"></a-ring>
+                    </a-cylinder>
+                    <a-cylinder position="0 0.65 0" radius="0.14" height="1.2" material="color: #1e293b; metalness: 0.9; roughness: 0.2">
+                        <a-torus position="0 0.35 0" rotation="90 0 0" radius="0.18" radius-tubular="0.015" material="color: #00f3ff; shader: flat"></a-torus>
+                    </a-cylinder>
+
+                    <!-- Kiosk Header Hologram -->
+                    <a-entity position="0 2.22 0">
+                        <a-plane width="3.2" height="0.32" material="color: #05070d; opacity: 0.92; transparent: true; roughness: 0.2">
+                            <a-ring position="0 0 0.005" radius-inner="1.58" radius-outer="1.59" material="color: #00f3ff; shader: flat; opacity: 0.5"></a-ring>
+                            <a-text value="AERODYN 3D // VR WORKSHOP TERMINAL" align="center" position="0 0 0.02" color="#00f3ff" width="4.8" font="mozillavr"></a-text>
+                        </a-plane>
+                    </a-entity>
+
+                    <!-- PANEL 1 (LEFT): VEHICLE SELECTION & CATEGORY -->
+                    <a-entity id="vr-panel-vehicles" position="-1.15 1.38 0.18" rotation="0 22 0">
+                        <a-plane width="1.15" height="1.45" material="color: #090e18; opacity: 0.92; transparent: true; roughness: 0.2">
+                            <a-text value="VEHICLE SELECTOR" align="center" position="0 0.6 0.02" color="#ffb703" width="3.2" font="mozillavr"></a-text>
+
+                            <!-- Category Switcher Buttons in VR -->
+                            <a-entity id="vr-btn-cat-moto" class="clickable vr-btn" position="-0.27 0.46 0.03"
+                                geometry="primitive: plane; width: 0.48; height: 0.14" material="color: #00f3ff"
+                                onclick="handleAction('selectCategory', 'motorcycle')">
+                                <a-text id="vr-txt-cat-moto" value="🏍️ MOTO (6)" align="center" position="0 0 0.01" color="#05070d" width="2.2" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <a-entity id="vr-btn-cat-car" class="clickable vr-btn" position="0.27 0.46 0.03"
+                                geometry="primitive: plane; width: 0.48; height: 0.14" material="color: #1e293b"
+                                onclick="handleAction('selectCategory', 'car')">
+                                <a-text id="vr-txt-cat-car" value="🚗 CARS (5)" align="center" position="0 0 0.01" color="#cbd5e1" width="2.2" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <!-- Dynamic 3D Vehicle Grid Container -->
+                            <a-entity id="vr-vehicle-list-container" position="0 0.28 0.02"></a-entity>
+                        </a-plane>
+                    </a-entity>
+
+                    <!-- PANEL 2 (CENTER): 11-PART MOD TUNER & PAINT ORBS -->
+                    <a-entity id="vr-panel-mods" position="0 1.34 0">
+                        <a-plane width="1.25" height="1.62" material="color: #0a0f1d; opacity: 0.94; transparent: true; roughness: 0.2">
+                            <a-text value="🛠️ 11-PART MOD TUNING RACK" align="center" position="0 0.7 0.02" color="#00f3ff" width="3.5" font="mozillavr"></a-text>
+
+                            <!-- Paint Swatches Row in VR -->
+                            <a-entity position="0 0.54 0.02">
+                                <a-text value="COLOR:" position="-0.52 0 0" color="#8e9bb0" width="1.8" font="mozillavr"></a-text>
+                                <a-sphere class="clickable vr-paint-orb" position="-0.26 0 0.02" radius="0.04" material="color: #e11d48; roughness: 0.2; metalness: 0.8" onclick="handleAction('applyColor', '#e11d48')"></a-sphere>
+                                <a-sphere class="clickable vr-paint-orb" position="-0.16 0 0.02" radius="0.04" material="color: #00f3ff; roughness: 0.2; metalness: 0.8" onclick="handleAction('applyColor', '#00f3ff')"></a-sphere>
+                                <a-sphere class="clickable vr-paint-orb" position="-0.06 0 0.02" radius="0.04" material="color: #16a34a; roughness: 0.2; metalness: 0.8" onclick="handleAction('applyColor', '#16a34a')"></a-sphere>
+                                <a-sphere class="clickable vr-paint-orb" position="0.04 0 0.02" radius="0.04" material="color: #f59e0b; roughness: 0.2; metalness: 0.8" onclick="handleAction('applyColor', '#f59e0b')"></a-sphere>
+                                <a-sphere class="clickable vr-paint-orb" position="0.14 0 0.02" radius="0.04" material="color: #9333ea; roughness: 0.2; metalness: 0.8" onclick="handleAction('applyColor', '#9333ea')"></a-sphere>
+                                <a-sphere class="clickable vr-paint-orb" position="0.24 0 0.02" radius="0.04" material="color: #f8fafc; roughness: 0.2; metalness: 0.8" onclick="handleAction('applyColor', '#f8fafc')"></a-sphere>
+                                <a-sphere class="clickable vr-paint-orb" position="0.34 0 0.02" radius="0.04" material="color: #0f172a; roughness: 0.2; metalness: 0.8" onclick="handleAction('applyColor', '#0f172a')"></a-sphere>
+                            </a-entity>
+
+                            <!-- Dynamic 11-Mod Upgrade Buttons Container -->
+                            <a-entity id="vr-mods-buttons-container" position="0 0.38 0.02"></a-entity>
+
+                            <!-- Reset Baseline Button -->
+                            <a-entity id="vr-btn-reset-mods" class="clickable vr-btn" position="0 -0.68 0.03"
+                                geometry="primitive: plane; width: 1.05; height: 0.11" material="color: #ef4444"
+                                onclick="handleAction('resetMods', '')">
+                                <a-text value="🔄 RESTORE FACTORY BASELINE" align="center" position="0 0 0.01" color="#ffffff" width="2.4" font="mozillavr"></a-text>
+                            </a-entity>
+                        </a-plane>
+                    </a-entity>
+
+                    <!-- PANEL 3 (RIGHT): LIVE DYNO STATS & ENVIRONMENT WARP -->
+                    <a-entity id="vr-panel-telemetry" position="1.15 1.38 0.18" rotation="0 -22 0">
+                        <a-plane width="1.15" height="1.45" material="color: #090e18; opacity: 0.92; transparent: true; roughness: 0.2">
+                            <a-text value="📊 DYNO TELEMETRY" align="center" position="0 0.6 0.02" color="#00ff88" width="3.2" font="mozillavr"></a-text>
+
+                            <!-- Live Telemetry Readout Grid -->
+                            <a-entity id="vr-telemetry-text-group" position="-0.48 0.44 0.02"></a-entity>
+
+                            <a-text value="🚀 LAUNCH ENVIRONMENT" align="center" position="0 -0.16 0.02" color="#00f3ff" width="2.8" font="mozillavr"></a-text>
+
+                            <!-- Warp Teleport Buttons in VR -->
+                            <a-entity class="clickable vr-btn" position="-0.26 -0.3 0.03"
+                                geometry="primitive: plane; width: 0.48; height: 0.13" material="color: #00f3ff"
+                                onclick="handleAction('switchLocation', 'track')">
+                                <a-text value="🏁 TEST TRACK" align="center" position="0 0 0.01" color="#05070d" width="2.1" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <a-entity class="clickable vr-btn" position="0.26 -0.3 0.03"
+                                geometry="primitive: plane; width: 0.48; height: 0.13" material="color: #3b82f6"
+                                onclick="handleAction('switchLocation', 'city')">
+                                <a-text value="🏙️ CITY ROAD" align="center" position="0 0 0.01" color="#ffffff" width="2.1" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <a-entity class="clickable vr-btn" position="-0.26 -0.46 0.03"
+                                geometry="primitive: plane; width: 0.48; height: 0.13" material="color: #10b981"
+                                onclick="handleAction('switchLocation', 'highway')">
+                                <a-text value="🛣️ HIGHWAY" align="center" position="0 0 0.01" color="#ffffff" width="2.1" font="mozillavr"></a-text>
+                            </a-entity>
+
+                            <a-entity class="clickable vr-btn" position="0.26 -0.46 0.03"
+                                geometry="primitive: plane; width: 0.48; height: 0.13" material="color: #f59e0b"
+                                onclick="handleAction('switchLocation', 'license')">
+                                <a-text value="🪪 LICENSE EXAM" align="center" position="0 0 0.01" color="#05070d" width="2.1" font="mozillavr"></a-text>
+                            </a-entity>
+                        </a-plane>
+                    </a-entity>
+                </a-entity>
             </a-entity>
 
             <!-- ===================================================================== -->
@@ -1076,6 +1260,44 @@
                 <a-entity id="vehicle-headlights" position="0 0.5 -1.2"
                     light="type: spot; color: #e2e8f0; intensity: 3.5; distance: 45; angle: 35; penumbra: 0.5; castShadow: true"
                     rotation="0 180 0"></a-entity>
+
+                <!-- ================================================================= -->
+                <!-- IN-VR 3D COCKPIT DIGITAL CLUSTER & HEADS-UP DISPLAY (VR Driving)  -->
+                <!-- ================================================================= -->
+                <a-entity id="vr-cockpit-hud" position="0 0.88 -0.42" rotation="-15 0 0" visible="false">
+                    <!-- Curved Glass Backplate -->
+                    <a-plane width="0.76" height="0.32" material="color: #030712; opacity: 0.90; transparent: true; roughness: 0.1; metalness: 0.8">
+                        <a-ring position="0 0 0.005" radius-inner="0.36" radius-outer="0.37" material="color: #00f3ff; shader: flat; opacity: 0.6"></a-ring>
+                    </a-plane>
+
+                    <!-- Speedometer Section -->
+                    <a-text id="vr-hud-speed" value="0" align="center" position="-0.22 0.04 0.02" color="#00f3ff" width="3.2" font="mozillavr"></a-text>
+                    <a-text value="KM / H" align="center" position="-0.22 -0.07 0.02" color="#8e9bb0" width="1.5" font="mozillavr"></a-text>
+
+                    <!-- Tachometer Section (RPM Bar + Digital Value) -->
+                    <a-text id="vr-hud-rpm" value="800 RPM" align="center" position="0.02 0.06 0.02" color="#ffb703" width="1.8" font="mozillavr"></a-text>
+                    <a-plane position="0.02 0.01 0.02" width="0.26" height="0.025" material="color: #1e293b">
+                        <a-plane id="vr-hud-rpm-fill" position="-0.12 0 0.005" width="0.02" height="0.025" material="color: #ffb703; shader: flat"></a-plane>
+                    </a-plane>
+
+                    <!-- Gear Indicator Box -->
+                    <a-entity position="0.24 0.03 0.02">
+                        <a-plane width="0.14" height="0.16" material="color: #0f172a">
+                            <a-text id="vr-hud-gear" value="1" align="center" position="0 0.02 0.01" color="#00ff88" width="3.2" font="mozillavr"></a-text>
+                            <a-text value="GEAR" align="center" position="0 -0.05 0.01" color="#64748b" width="1.2" font="mozillavr"></a-text>
+                        </a-plane>
+                    </a-entity>
+
+                    <!-- Lower Telemetry Readouts -->
+                    <a-entity position="0 -0.10 0.02">
+                        <a-text id="vr-hud-gforce" value="G: 0.00" position="-0.32 0 0" color="#00f3ff" width="1.4" font="mozillavr"></a-text>
+                        <a-text id="vr-hud-braketemp" value="BRK: 38°C" position="-0.08 0 0" color="#f59e0b" width="1.4" font="mozillavr"></a-text>
+                        <a-text id="vr-hud-power" value="PWR: 205 HP" position="0.14 0 0" color="#00ff88" width="1.4" font="mozillavr"></a-text>
+                    </a-entity>
+
+                    <!-- Active Zone Banner -->
+                    <a-text id="vr-hud-zone-text" value="AERODYN VR DRIVER ACTIVE" align="center" position="0 0.18 0.02" color="#00ff88" width="2.2" font="mozillavr"></a-text>
+                </a-entity>
             </a-entity>
         </a-scene>
     </div>
@@ -1090,6 +1312,7 @@
             <div class="brand-logo">
                 AERODYN <span>3D</span>
                 <div class="badge-tag">ENGINEERING LAB</div>
+                <div class="badge-tag badge-vr">🥽 VR READY</div>
             </div>
 
             <!-- Vehicle Category Toggle -->
@@ -1391,10 +1614,7 @@
             </div>
 
             <div style="font-family:var(--font-tech); font-size:0.85rem; color:var(--text-muted);">
-                USE <kbd style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:3px; color:#fff;">W A S
-                    D</kbd> / ARROWS TO DRIVE &bull; <kbd
-                    style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:3px; color:#fff;">SPACE</kbd>
-                HANDBRAKE
+                <span style="color:var(--cyan)">VR:</span> RIGHT TRIGGER = GAS &bull; LEFT TRIGGER = BRAKE &bull; THUMBSTICK = STEER &bull; <kbd style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:3px; color:#fff;">W A S D</kbd> TO DRIVE
             </div>
         </footer>
 
@@ -1423,12 +1643,14 @@
 
         <!-- Drive Controls Guide -->
         <div id="drive-controls-guide">
-            <div><kbd>W</kbd> Throttle</div>
-            <div><kbd>S</kbd> Brake / Reverse</div>
-            <div><kbd>A</kbd> <kbd>D</kbd> Steer</div>
-            <div><kbd>SPACE</kbd> Handbrake</div>
-            <div><kbd>C</kbd> Camera View</div>
-            <div><kbd>R</kbd> Reset Track</div>
+            <div style="color:var(--cyan); font-weight:700; margin-bottom:2px;">🎮 VR & KEYBOARD CONTROLS</div>
+            <div><kbd>RT</kbd> / <kbd>W</kbd> Throttle</div>
+            <div><kbd>LT</kbd> / <kbd>S</kbd> Brake & Reverse</div>
+            <div><kbd>Stick</kbd> / <kbd>A</kbd><kbd>D</kbd> Steer</div>
+            <div><kbd>Grip</kbd> / <kbd>SPACE</kbd> Handbrake</div>
+            <div><kbd>A</kbd> / <kbd>C</kbd> Camera View</div>
+            <div><kbd>B</kbd> / <kbd>M</kbd> VR Quick Menu</div>
+            <div><kbd>Y</kbd> / <kbd>R</kbd> Reset Vehicle</div>
         </div>
 
         <!-- VR Toast Alert -->
@@ -1477,7 +1699,7 @@
                 <div class="help-card">
                     <h4>⚡ Power-to-Weight Ratio</h4>
                     <ul>
-                        <li>&bull; Acceleration is governed by $F = m \cdot a$.</li>
+                        <li>&bull; Acceleration is governed by F = m &bull; a.</li>
                         <li>&bull; Reducing 100 kg often yields faster lap times than adding 50 HP.</li>
                         <li>&bull; Lighter vehicles brake later and corner with higher lateral Gs.</li>
                     </ul>
@@ -1493,7 +1715,7 @@
                 <div class="help-card">
                     <h4>🛞 Tire Traction & Contact Patch</h4>
                     <ul>
-                        <li>&bull; Racing slicks generate maximum friction ($\mu > 1.0$) when warm.</li>
+                        <li>&bull; Racing slicks generate maximum friction (μ > 1.0) when warm.</li>
                         <li>&bull; Wider tires provide superior cornering but increase rolling resistance.</li>
                         <li>&bull; Wet conditions require tread sipes to evacuate water and avoid hydroplaning.</li>
                     </ul>
@@ -1511,7 +1733,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- JAVASCRIPT APPLICATION CORE & PHYSICS ENGINE                              -->
+    <!-- JAVASCRIPT APPLICATION CORE, VR INPUT & PHYSICS ENGINE                    -->
     <!-- ========================================================================= -->
     <script>
         /* =========================================================================
@@ -1842,6 +2064,7 @@
         let currentCategory = 'motorcycle';
         let activeLocation = 'showroom';
         let currentCameraView = 'first';
+        let inVRMode = false;
 
         /* =========================================================================
            3. 11-PART MODIFICATION DEFINITIONS & EDUCATIONAL DATA
@@ -1918,7 +2141,150 @@
         };
 
         /* =========================================================================
-           4. ACTION HANDLER & DISPATCHER
+           4. VR CONTROLLER DRIVING & HAPTIC SYSTEM (Meta Quest 3S / WebXR Gamepads)
+           ========================================================================= */
+        const VRControllerSystem = {
+            btnAPressed: false,
+            btnBPressed: false,
+            btnXPressed: false,
+            btnYPressed: false,
+            floatingMenuVisible: false,
+
+            pollInputs: function () {
+                const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+                let vrThrottle = 0;
+                let vrBrake = 0;
+                let vrSteer = 0;
+                let vrHandbrake = false;
+                let leftGp = null;
+                let rightGp = null;
+
+                for (let i = 0; i < gamepads.length; i++) {
+                    const gp = gamepads[i];
+                    if (!gp || !gp.connected) continue;
+                    const hand = gp.hand || (gp.id && gp.id.toLowerCase().includes('left') ? 'left' : (gp.id && gp.id.toLowerCase().includes('right') ? 'right' : ''));
+                    if (hand === 'left' || i === 0) {
+                        if (!leftGp) leftGp = gp;
+                    }
+                    if (hand === 'right' || i === 1) {
+                        if (!rightGp) rightGp = gp;
+                    }
+                }
+
+                // Process Right Controller (Throttle, Steer, Actions)
+                if (rightGp) {
+                    // Trigger -> Analog Throttle
+                    if (rightGp.buttons[0] && rightGp.buttons[0].value > 0.05) {
+                        vrThrottle = Math.max(vrThrottle, rightGp.buttons[0].value);
+                    }
+                    // Thumbstick Y (Forward Throttle)
+                    const stickY = rightGp.axes[3] !== undefined ? rightGp.axes[3] : (rightGp.axes[1] || 0);
+                    if (stickY < -0.2) {
+                        vrThrottle = Math.max(vrThrottle, -stickY);
+                    }
+                    // Thumbstick X (Steer)
+                    const stickX = rightGp.axes[2] !== undefined ? rightGp.axes[2] : (rightGp.axes[0] || 0);
+                    if (Math.abs(stickX) > 0.15) {
+                        vrSteer = stickX;
+                    }
+                    // Grip -> Handbrake
+                    if (rightGp.buttons[1] && rightGp.buttons[1].value > 0.4) {
+                        vrHandbrake = true;
+                    }
+                    // Button A -> Cam Toggle (edge triggered)
+                    if (rightGp.buttons[4] && rightGp.buttons[4].pressed && !this.btnAPressed) {
+                        setCameraView(currentCameraView === 'first' ? 'third' : 'first');
+                        this.triggerHaptic(rightGp, 0.4, 30);
+                        this.btnAPressed = true;
+                    } else if (rightGp.buttons[4] && !rightGp.buttons[4].pressed) {
+                        this.btnAPressed = false;
+                    }
+                    // Button B -> Toggle Floating VR Menu
+                    if (rightGp.buttons[5] && rightGp.buttons[5].pressed && !this.btnBPressed) {
+                        this.toggleFloatingMenu();
+                        this.triggerHaptic(rightGp, 0.4, 30);
+                        this.btnBPressed = true;
+                    } else if (rightGp.buttons[5] && !rightGp.buttons[5].pressed) {
+                        this.btnBPressed = false;
+                    }
+                }
+
+                // Process Left Controller (Brake, Steer, Actions)
+                if (leftGp) {
+                    // Trigger -> Analog Brake
+                    if (leftGp.buttons[0] && leftGp.buttons[0].value > 0.05) {
+                        vrBrake = Math.max(vrBrake, leftGp.buttons[0].value);
+                    }
+                    // Thumbstick Y (Down = Brake/Reverse)
+                    const stickY = leftGp.axes[3] !== undefined ? leftGp.axes[3] : (leftGp.axes[1] || 0);
+                    if (stickY > 0.2) {
+                        vrBrake = Math.max(vrBrake, stickY);
+                    }
+                    // Thumbstick X (Steer)
+                    const stickX = leftGp.axes[2] !== undefined ? leftGp.axes[2] : (leftGp.axes[0] || 0);
+                    if (Math.abs(stickX) > 0.15 && Math.abs(vrSteer) < 0.15) {
+                        vrSteer = stickX;
+                    }
+                    // Grip -> Handbrake
+                    if (leftGp.buttons[1] && leftGp.buttons[1].value > 0.4) {
+                        vrHandbrake = true;
+                    }
+                    // Button X -> Horn
+                    if (leftGp.buttons[4] && leftGp.buttons[4].pressed && !this.btnXPressed) {
+                        soundSynth.playHorn();
+                        this.triggerHaptic(leftGp, 0.6, 50);
+                        this.btnXPressed = true;
+                    } else if (leftGp.buttons[4] && !leftGp.buttons[4].pressed) {
+                        this.btnXPressed = false;
+                    }
+                    // Button Y -> Reset Vehicle Position
+                    if (leftGp.buttons[5] && leftGp.buttons[5].pressed && !this.btnYPressed) {
+                        resetVehiclePosition();
+                        this.triggerHaptic(leftGp, 0.5, 40);
+                        this.btnYPressed = true;
+                    } else if (leftGp.buttons[5] && !leftGp.buttons[5].pressed) {
+                        this.btnYPressed = false;
+                    }
+                }
+
+                return {
+                    throttle: vrThrottle,
+                    brake: vrBrake,
+                    steer: vrSteer,
+                    handbrake: vrHandbrake,
+                    leftGp,
+                    rightGp
+                };
+            },
+
+            triggerHaptic: function (gp, intensity = 0.5, duration = 30) {
+                if (!gp) return;
+                try {
+                    if (gp.hapticActuators && gp.hapticActuators[0] && gp.hapticActuators[0].pulse) {
+                        gp.hapticActuators[0].pulse(intensity, duration);
+                    } else if (gp.vibrationActuator && gp.vibrationActuator.playEffectWithParameters) {
+                        gp.vibrationActuator.playEffectWithParameters('dual-rumble', {
+                            startDelay: 0,
+                            duration: duration,
+                            weakMagnitude: intensity,
+                            strongMagnitude: intensity
+                        });
+                    }
+                } catch (e) { }
+            },
+
+            toggleFloatingMenu: function () {
+                const menu = document.getElementById('vr-floating-menu');
+                if (!menu) return;
+                this.floatingMenuVisible = !this.floatingMenuVisible;
+                menu.setAttribute('visible', this.floatingMenuVisible);
+                soundSynth.playClick();
+                showToast(this.floatingMenuVisible ? "⚡ VR Quick Menu Opened" : "VR Menu Closed");
+            }
+        };
+
+        /* =========================================================================
+           5. ACTION HANDLER & DISPATCHER
            ========================================================================= */
         function handleAction(action, param) {
             soundSynth.init();
@@ -1956,8 +2322,10 @@
 
         function setCameraView(viewType) {
             currentCameraView = viewType;
-            document.getElementById('btn-cam-first').classList.toggle('active', viewType === 'first');
-            document.getElementById('btn-cam-third').classList.toggle('active', viewType === 'third');
+            const btnFirst = document.getElementById('btn-cam-first');
+            const btnThird = document.getElementById('btn-cam-third');
+            if (btnFirst) btnFirst.classList.toggle('active', viewType === 'first');
+            if (btnThird) btnThird.classList.toggle('active', viewType === 'third');
             showToast(viewType === 'first' ? "🥽 1st Person Cockpit View" : "📹 3rd Person Chase View");
         }
 
@@ -1974,7 +2342,7 @@
         }
 
         /* =========================================================================
-           5. 3D PROCEDURAL VEHICLE MODEL BUILDER
+           6. 3D PROCEDURAL VEHICLE MODEL BUILDER & COCKPIT CONTROLS
            ========================================================================= */
         function buildProceduralVehicleModel(vehicleData) {
             const container = document.getElementById('vehicle-visual-model');
@@ -1988,6 +2356,7 @@
             const suspHeight = MOD_SPECS.suspension[activeMods.suspension].height || 0;
 
             if (vehicleData.type === 'motorcycle') {
+                // Main Frame
                 const frame = document.createElement('a-box');
                 frame.setAttribute('position', `0 ${0.55 + suspHeight} 0`);
                 frame.setAttribute('width', '0.22');
@@ -1996,6 +2365,7 @@
                 frame.setAttribute('material', 'color: #1e293b; metalness: 0.8; roughness: 0.3');
                 container.appendChild(frame);
 
+                // Fuel Tank
                 const tank = document.createElement('a-box');
                 tank.setAttribute('position', `0 ${0.78 + suspHeight} -0.15`);
                 tank.setAttribute('width', '0.36');
@@ -2004,6 +2374,7 @@
                 tank.setAttribute('material', `color: ${color}; roughness: ${roughness}; metalness: ${metalness}`);
                 container.appendChild(tank);
 
+                // Tail Cowl
                 const tail = document.createElement('a-box');
                 tail.setAttribute('position', `0 ${0.75 + suspHeight} 0.55`);
                 tail.setAttribute('width', '0.24');
@@ -2013,6 +2384,7 @@
                 tail.setAttribute('material', `color: ${color}; roughness: ${roughness}; metalness: ${metalness}`);
                 container.appendChild(tail);
 
+                // Rider Seat
                 const seat = document.createElement('a-box');
                 seat.setAttribute('position', `0 ${0.68 + suspHeight} 0.2`);
                 seat.setAttribute('width', '0.26');
@@ -2021,6 +2393,7 @@
                 seat.setAttribute('material', 'color: #0f172a; roughness: 0.9');
                 container.appendChild(seat);
 
+                // Front Inverted Suspension Forks
                 const forkColor = activeMods.suspension > 0 ? '#f59e0b' : '#94a3b8';
                 const forkL = document.createElement('a-cylinder');
                 forkL.setAttribute('position', `-0.12 ${0.42 + suspHeight} -0.85`);
@@ -2038,6 +2411,7 @@
                 forkR.setAttribute('material', `color: ${forkColor}; metalness: 0.9; roughness: 0.1`);
                 container.appendChild(forkR);
 
+                // Front & Rear Wheels
                 const frontWheel = document.createElement('a-torus');
                 frontWheel.setAttribute('position', '0 0.3 -0.95');
                 frontWheel.setAttribute('rotation', '0 90 0');
@@ -2054,6 +2428,7 @@
                 rearWheel.setAttribute('material', `color: #0f172a; roughness: ${activeMods.tires === 2 ? 0.2 : 0.8}`);
                 container.appendChild(rearWheel);
 
+                // Performance Exhaust Pipe
                 const exhaustColor = activeMods.exhaust === 2 ? '#3b82f6' : (activeMods.exhaust === 1 ? '#e2e8f0' : '#64748b');
                 const exhaust = document.createElement('a-cylinder');
                 exhaust.setAttribute('position', `0.22 ${0.35 + suspHeight} 0.5`);
@@ -2062,6 +2437,59 @@
                 exhaust.setAttribute('rotation', '75 10 0');
                 exhaust.setAttribute('material', `color: ${exhaustColor}; metalness: 0.95; roughness: 0.1`);
                 container.appendChild(exhaust);
+
+                // 1st Person VR Cockpit: 3D Clip-on Handlebars & Controls
+                const hbar = document.createElement('a-cylinder');
+                hbar.setAttribute('id', 'veh-handlebars');
+                hbar.setAttribute('position', `0 ${0.82 + suspHeight} -0.32`);
+                hbar.setAttribute('rotation', '0 0 90');
+                hbar.setAttribute('radius', '0.016');
+                hbar.setAttribute('height', '0.65');
+                hbar.setAttribute('material', 'color: #334155; metalness: 0.9; roughness: 0.2');
+
+                // Grips & Levers
+                const gripL = document.createElement('a-cylinder');
+                gripL.setAttribute('position', `-0.28 ${0.82 + suspHeight} -0.32`);
+                gripL.setAttribute('rotation', '0 0 90');
+                gripL.setAttribute('radius', '0.024');
+                gripL.setAttribute('height', '0.12');
+                gripL.setAttribute('material', 'color: #020617; roughness: 0.9');
+                container.appendChild(gripL);
+
+                const gripR = document.createElement('a-cylinder');
+                gripR.setAttribute('position', `0.28 ${0.82 + suspHeight} -0.32`);
+                gripR.setAttribute('rotation', '0 0 90');
+                gripR.setAttribute('radius', '0.024');
+                gripR.setAttribute('height', '0.12');
+                gripR.setAttribute('material', 'color: #020617; roughness: 0.9');
+                container.appendChild(gripR);
+
+                const leverL = document.createElement('a-box');
+                leverL.setAttribute('position', `-0.25 ${0.83 + suspHeight} -0.36`);
+                leverL.setAttribute('rotation', '0 15 0');
+                leverL.setAttribute('width', '0.12');
+                leverL.setAttribute('height', '0.015');
+                leverL.setAttribute('depth', '0.01');
+                leverL.setAttribute('material', 'color: #94a3b8; metalness: 0.9');
+                container.appendChild(leverL);
+
+                const leverR = document.createElement('a-box');
+                leverR.setAttribute('position', `0.25 ${0.83 + suspHeight} -0.36`);
+                leverR.setAttribute('rotation', '0 -15 0');
+                leverR.setAttribute('width', '0.12');
+                leverR.setAttribute('height', '0.015');
+                leverR.setAttribute('depth', '0.01');
+                leverR.setAttribute('material', 'color: #94a3b8; metalness: 0.9');
+                container.appendChild(leverR);
+
+                container.appendChild(hbar);
+
+                // Position VR Cockpit HUD nicely above triple clamp
+                const cockpitHud = document.getElementById('vr-cockpit-hud');
+                if (cockpitHud) {
+                    cockpitHud.setAttribute('position', `0 ${0.92 + suspHeight} -0.42`);
+                    cockpitHud.setAttribute('rotation', '-15 0 0');
+                }
 
             } else {
                 // --- CAR GEOMETRY ---
@@ -2137,11 +2565,44 @@
                     spoiler.setAttribute('material', 'color: #020617; metalness: 0.8; roughness: 0.2');
                     container.appendChild(spoiler);
                 }
+
+                // 1st Person VR Cockpit: Cyber Steering Wheel & Dash
+                const dashCowl = document.createElement('a-box');
+                dashCowl.setAttribute('position', `0 ${0.74 + suspHeight} -0.58`);
+                dashCowl.setAttribute('width', '1.38');
+                dashCowl.setAttribute('height', '0.24');
+                dashCowl.setAttribute('depth', '0.45');
+                dashCowl.setAttribute('material', 'color: #090e18; roughness: 0.9');
+                container.appendChild(dashCowl);
+
+                const steerCol = document.createElement('a-cylinder');
+                steerCol.setAttribute('position', `-0.38 ${0.72 + suspHeight} -0.42`);
+                steerCol.setAttribute('rotation', '22 0 0');
+                steerCol.setAttribute('radius', '0.024');
+                steerCol.setAttribute('height', '0.28');
+                steerCol.setAttribute('material', 'color: #1e293b; metalness: 0.9');
+                container.appendChild(steerCol);
+
+                const wheelTorus = document.createElement('a-torus');
+                wheelTorus.setAttribute('id', 'veh-steering-wheel');
+                wheelTorus.setAttribute('position', `-0.38 ${0.84 + suspHeight} -0.32`);
+                wheelTorus.setAttribute('rotation', '22 0 0');
+                wheelTorus.setAttribute('radius', '0.17');
+                wheelTorus.setAttribute('radius-tubular', '0.018');
+                wheelTorus.setAttribute('material', 'color: #020617; roughness: 0.8; metalness: 0.3');
+                container.appendChild(wheelTorus);
+
+                // Position VR Cockpit HUD in windshield center view
+                const cockpitHud = document.getElementById('vr-cockpit-hud');
+                if (cockpitHud) {
+                    cockpitHud.setAttribute('position', `-0.38 ${0.96 + suspHeight} -0.55`);
+                    cockpitHud.setAttribute('rotation', '-15 0 0');
+                }
             }
         }
 
         /* =========================================================================
-           6. VEHICLE DYNAMICS CALCULATOR & PHYSICS ENGINE
+           7. VEHICLE DYNAMICS CALCULATOR & PHYSICS ENGINE (VR Controller Driven)
            ========================================================================= */
         const physics = {
             speed: 0,
@@ -2162,6 +2623,7 @@
             if (e.code === 'KeyC') setCameraView(currentCameraView === 'first' ? 'third' : 'first');
             if (e.code === 'KeyH') soundSynth.playHorn();
             if (e.code === 'KeyR') resetVehiclePosition();
+            if (e.code === 'KeyM') VRControllerSystem.toggleFloatingMenu();
         });
         window.addEventListener('keyup', (e) => { keys[e.code] = false; });
         window.addEventListener('pointerdown', () => soundSynth.init());
@@ -2230,28 +2692,30 @@
             const dt = Math.min(deltaTime, 0.1);
             const dyno = calculateDynamicSpecs();
 
-            let throttle = 0;
-            let brake = 0;
-            let steer = 0;
+            // Poll VR Controllers & merge with Keyboard
+            const vr = VRControllerSystem.pollInputs();
 
-            if (keys['KeyW'] || keys['ArrowUp']) throttle = 1.0;
-            if (keys['KeyS'] || keys['ArrowDown']) brake = 1.0;
-            if (keys['KeyA'] || keys['ArrowLeft']) steer = -1.0;
-            if (keys['KeyD'] || keys['ArrowRight']) steer = 1.0;
-            const handbrake = keys['Space'] || false;
+            let throttle = (keys['KeyW'] || keys['ArrowUp']) ? 1.0 : vr.throttle;
+            let brake = (keys['KeyS'] || keys['ArrowDown']) ? 1.0 : vr.brake;
+            let steer = (keys['KeyA'] || keys['ArrowLeft']) ? -1.0 : ((keys['KeyD'] || keys['ArrowRight']) ? 1.0 : vr.steer);
+            const handbrake = (keys['Space'] || false) || vr.handbrake;
 
             const topSpeedMS = (dyno.topSpeed * 1.1) / 3.6;
             const maxTorqueAccel = (dyno.torque * 9.8) / (dyno.weight * 1.8);
             const brakeBoost = 36 / dyno.braking;
 
-            if (throttle > 0 && brake === 0) {
+            if (throttle > 0.05 && brake === 0) {
                 const powerRatio = Math.max(0.1, 1 - (physics.speedMS / topSpeedMS));
                 physics.speedMS += maxTorqueAccel * throttle * powerRatio * dt;
-            } else if (brake > 0) {
+                if (vr.rightGp && Math.random() < 0.2) {
+                    VRControllerSystem.triggerHaptic(vr.rightGp, 0.15 * throttle, 20);
+                }
+            } else if (brake > 0.05) {
                 if (physics.speedMS > 0.5) {
                     physics.speedMS = Math.max(0, physics.speedMS - (18 * brakeBoost) * brake * dt);
                     physics.brakeTemp = Math.min(350, physics.brakeTemp + 0.5);
                     soundSynth.triggerSkid(0.15);
+                    if (vr.leftGp) VRControllerSystem.triggerHaptic(vr.leftGp, 0.3 * brake, 25);
                 } else {
                     physics.speedMS = Math.max(-8, physics.speedMS - 4 * dt);
                 }
@@ -2264,10 +2728,13 @@
             if (handbrake) {
                 physics.speedMS = Math.max(0, physics.speedMS - 25 * dt);
                 soundSynth.triggerSkid(0.3);
+                if (vr.leftGp) VRControllerSystem.triggerHaptic(vr.leftGp, 0.5, 30);
+                if (vr.rightGp) VRControllerSystem.triggerHaptic(vr.rightGp, 0.5, 30);
             }
 
             physics.speed = Math.round(physics.speedMS * 3.6);
 
+            // RPM & Gearing calculation
             if (currentVehicle.type === 'motorcycle' && currentVehicle.id === 'moto_electric') {
                 physics.gear = 'D';
                 physics.rpm = Math.min(12000, 800 + (physics.speedMS / topSpeedMS) * 11000);
@@ -2303,14 +2770,32 @@
                 vehicleRoot.object3D.rotation.y = rad;
             }
 
+            // Dynamic Cockpit Steering / Handlebar Mesh Animation in VR
+            const hbar = document.getElementById('veh-handlebars');
+            if (hbar) {
+                hbar.object3D.rotation.y = (-physics.steerAngle * Math.PI / 180) * 0.5;
+            }
+            const swheel = document.getElementById('veh-steering-wheel');
+            if (swheel) {
+                swheel.object3D.rotation.z = (physics.steerAngle * Math.PI / 180) * 2.2;
+            }
+
+            // Dynamic VR Comfort Vignette during high G-forces or high speed
+            const vignette = document.getElementById('vr-vignette');
+            if (vignette) {
+                const targetOpacity = Math.min(0.55, (physics.gForce * 0.3) + (physics.speed > 160 ? 0.2 : 0));
+                vignette.setAttribute('material', 'opacity', targetOpacity);
+            }
+
             soundSynth.updateEngineSound(physics.rpm, throttle);
             updateDrivingHUD(dyno);
+            updateVRCockpitHUD(dyno);
             updateCameraPosition();
             updateInfiniteCityRoadStreaming();
         }
 
         /* =========================================================================
-           7. UI TELEMETRY SYNCHRONIZER
+           8. DUAL HUD SYNCHRONIZER (2D Desktop HUD + 3D In-VR Cockpit Cluster)
            ========================================================================= */
         function updateDrivingHUD(dyno) {
             const hudSpeed = document.getElementById('hud-speed');
@@ -2326,6 +2811,44 @@
             if (hudGforce) hudGforce.textContent = `${physics.gForce} G`;
             if (hudBrakeTemp) hudBrakeTemp.textContent = `${Math.round(physics.brakeTemp)} °C`;
             if (hudPower) hudPower.textContent = `${dyno.hp} HP`;
+        }
+
+        function updateVRCockpitHUD(dyno) {
+            const vrSpeed = document.getElementById('vr-hud-speed');
+            const vrRpm = document.getElementById('vr-hud-rpm');
+            const vrRpmFill = document.getElementById('vr-hud-rpm-fill');
+            const vrGear = document.getElementById('vr-hud-gear');
+            const vrGforce = document.getElementById('vr-hud-gforce');
+            const vrBrakeTemp = document.getElementById('vr-hud-braketemp');
+            const vrPower = document.getElementById('vr-hud-power');
+            const vrZone = document.getElementById('vr-hud-zone-text');
+
+            if (vrSpeed) vrSpeed.setAttribute('value', Math.abs(physics.speed));
+            if (vrRpm) vrRpm.setAttribute('value', `${physics.rpm} RPM`);
+            if (vrRpmFill) {
+                const fillWidth = Math.max(0.01, Math.min(0.26, (physics.rpm / 12000) * 0.26));
+                vrRpmFill.setAttribute('width', fillWidth);
+                vrRpmFill.setAttribute('position', `${-0.13 + fillWidth / 2} 0 0.005`);
+            }
+            if (vrGear) vrGear.setAttribute('value', physics.gear);
+            if (vrGforce) vrGforce.setAttribute('value', `G: ${physics.gForce}`);
+            if (vrBrakeTemp) vrBrakeTemp.setAttribute('value', `BRK: ${Math.round(physics.brakeTemp)}°C`);
+            if (vrPower) vrPower.setAttribute('value', `PWR: ${dyno.hp}HP`);
+
+            if (vrZone) {
+                if (activeLocation === 'track') {
+                    if (physics.position.z > -60) vrZone.setAttribute('value', 'ZONE 1: ACCEL RUN (0-100)');
+                    else if (physics.position.z > -120) vrZone.setAttribute('value', 'ZONE 2: BRAKING TEST (100-0)');
+                    else if (physics.position.z > -340) vrZone.setAttribute('value', 'ZONE 3: SLALOM CORNERING');
+                    else vrZone.setAttribute('value', '🏁 TEST RUN FINISHED');
+                } else if (activeLocation === 'city') {
+                    vrZone.setAttribute('value', '🏙️ INFINITE CITY ROAD');
+                } else if (activeLocation === 'highway') {
+                    vrZone.setAttribute('value', '🛣️ HIGH SPEED FREEWAY');
+                } else if (activeLocation === 'license') {
+                    vrZone.setAttribute('value', '🪪 LICENSE PRACTICE COURSE');
+                }
+            }
         }
 
         function updateCameraPosition() {
@@ -2364,7 +2887,162 @@
         }
 
         /* =========================================================================
-           8. SELECTION, CUSTOMIZATION & EDUCATIONAL HUD UPDATER
+           9. 3D VR WORKSHOP KIOSK PROCEDURAL BUILDER & SYNCHRONIZER
+           ========================================================================= */
+        function buildVRWorkshopKiosk() {
+            buildVRVehicleSelectorButtons();
+            buildVRModButtons();
+            updateVRWorkspaceUI();
+        }
+
+        function buildVRVehicleSelectorButtons() {
+            const container = document.getElementById('vr-vehicle-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const vehicles = Object.values(VEHICLE_CATALOG).filter(v => v.type === currentCategory);
+            vehicles.forEach((v, idx) => {
+                const yPos = -idx * 0.16;
+                const btn = document.createElement('a-entity');
+                btn.className = 'clickable vr-veh-card';
+                btn.setAttribute('position', `0 ${yPos} 0.01`);
+                btn.setAttribute('geometry', 'primitive: plane; width: 1.05; height: 0.13');
+                btn.setAttribute('material', `color: ${v.id === currentVehicleId ? '#00f3ff' : '#131b2e'}`);
+                btn.setAttribute('onclick', `handleAction('selectVehicle', '${v.id}')`);
+
+                const nameTxt = document.createElement('a-text');
+                nameTxt.setAttribute('value', v.name);
+                nameTxt.setAttribute('position', '-0.48 0 0.01');
+                nameTxt.setAttribute('color', v.id === currentVehicleId ? '#05070d' : '#ffffff');
+                nameTxt.setAttribute('width', '2.2');
+                nameTxt.setAttribute('font', 'mozillavr');
+                btn.appendChild(nameTxt);
+
+                const hpTxt = document.createElement('a-text');
+                hpTxt.setAttribute('value', `${v.hp} HP`);
+                hpTxt.setAttribute('position', '0.48 0 0.01');
+                hpTxt.setAttribute('align', 'right');
+                hpTxt.setAttribute('color', v.id === currentVehicleId ? '#05070d' : '#ffb703');
+                hpTxt.setAttribute('width', '2.0');
+                hpTxt.setAttribute('font', 'mozillavr');
+                btn.appendChild(hpTxt);
+
+                container.appendChild(btn);
+            });
+        }
+
+        function buildVRModButtons() {
+            const container = document.getElementById('vr-mods-buttons-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const modKeys = Object.keys(MOD_SPECS);
+            modKeys.forEach((modKey, idx) => {
+                const row = Math.floor(idx / 2);
+                const col = idx % 2;
+                const xPos = col === 0 ? -0.29 : 0.29;
+                const yPos = -row * 0.165;
+
+                const btn = document.createElement('a-entity');
+                btn.className = 'clickable vr-mod-card';
+                btn.setAttribute('id', `vr-mod-btn-${modKey}`);
+                btn.setAttribute('position', `${xPos} ${yPos} 0.01`);
+                btn.setAttribute('geometry', 'primitive: plane; width: 0.55; height: 0.14');
+                btn.setAttribute('material', 'color: #131d30');
+                btn.setAttribute('onclick', `handleAction('cycleMod', '${modKey}')`);
+
+                const titleTxt = document.createElement('a-text');
+                titleTxt.setAttribute('value', modKey.toUpperCase());
+                titleTxt.setAttribute('position', '0 0.03 0.01');
+                titleTxt.setAttribute('align', 'center');
+                titleTxt.setAttribute('color', '#00f3ff');
+                titleTxt.setAttribute('width', '1.8');
+                titleTxt.setAttribute('font', 'mozillavr');
+                btn.appendChild(titleTxt);
+
+                const valTxt = document.createElement('a-text');
+                valTxt.setAttribute('id', `vr-mod-val-${modKey}`);
+                valTxt.setAttribute('value', MOD_SPECS[modKey][activeMods[modKey]].name);
+                valTxt.setAttribute('position', '0 -0.03 0.01');
+                valTxt.setAttribute('align', 'center');
+                valTxt.setAttribute('color', '#ffb703');
+                valTxt.setAttribute('width', '1.5');
+                valTxt.setAttribute('font', 'mozillavr');
+                btn.appendChild(valTxt);
+
+                container.appendChild(btn);
+            });
+        }
+
+        function updateVRWorkspaceUI() {
+            // Update Category buttons in VR
+            const btnMoto = document.getElementById('vr-btn-cat-moto');
+            const btnCar = document.getElementById('vr-btn-cat-car');
+            const txtMoto = document.getElementById('vr-txt-cat-moto');
+            const txtCar = document.getElementById('vr-txt-cat-car');
+
+            if (btnMoto && txtMoto) {
+                btnMoto.setAttribute('material', 'color', currentCategory === 'motorcycle' ? '#00f3ff' : '#1e293b');
+                txtMoto.setAttribute('color', currentCategory === 'motorcycle' ? '#05070d' : '#cbd5e1');
+            }
+            if (btnCar && txtCar) {
+                btnCar.setAttribute('material', 'color', currentCategory === 'car' ? '#00f3ff' : '#1e293b');
+                txtCar.setAttribute('color', currentCategory === 'car' ? '#05070d' : '#cbd5e1');
+            }
+
+            // Rebuild Vehicle button cards
+            buildVRVehicleSelectorButtons();
+
+            // Update 11-Mod labels
+            Object.keys(MOD_SPECS).forEach(modKey => {
+                const valTxt = document.getElementById(`vr-mod-val-${modKey}`);
+                if (valTxt) valTxt.setAttribute('value', MOD_SPECS[modKey][activeMods[modKey]].name);
+            });
+
+            // Update Dyno Telemetry Hologram
+            const dyno = calculateDynamicSpecs();
+            const group = document.getElementById('vr-telemetry-text-group');
+            if (group) {
+                group.innerHTML = '';
+                const lines = [
+                    { label: 'HORSEPOWER:', val: `${dyno.hp} HP (+${dyno.hpGain})`, col: '#00ff88' },
+                    { label: 'TORQUE:', val: `${dyno.torque} Nm (+${dyno.torqueGain})`, col: '#00ff88' },
+                    { label: '0–100 ACCEL:', val: `${dyno.accel} s`, col: '#00f3ff' },
+                    { label: 'TOP SPEED:', val: `${dyno.topSpeed} km/h`, col: '#00f3ff' },
+                    { label: '100–0 BRAKING:', val: `${dyno.braking} m`, col: '#ffb703' },
+                    { label: 'CORNER GRIP:', val: `${dyno.grip} μ`, col: '#00f3ff' },
+                    { label: 'DRY WEIGHT:', val: `${dyno.weight} kg (${dyno.weightDelta}kg)`, col: '#ffffff' },
+                    { label: 'STABILITY:', val: `${dyno.stability}%`, col: '#00ff88' }
+                ];
+
+                lines.forEach((l, i) => {
+                    const row = document.createElement('a-entity');
+                    row.setAttribute('position', `0 ${-i * 0.08} 0`);
+
+                    const lbl = document.createElement('a-text');
+                    lbl.setAttribute('value', l.label);
+                    lbl.setAttribute('position', '0 0 0');
+                    lbl.setAttribute('color', '#8e9bb0');
+                    lbl.setAttribute('width', '1.8');
+                    lbl.setAttribute('font', 'mozillavr');
+                    row.appendChild(lbl);
+
+                    const val = document.createElement('a-text');
+                    val.setAttribute('value', l.val);
+                    val.setAttribute('position', '0.96 0 0');
+                    val.setAttribute('align', 'right');
+                    val.setAttribute('color', l.col);
+                    val.setAttribute('width', '1.8');
+                    val.setAttribute('font', 'mozillavr');
+                    row.appendChild(val);
+
+                    group.appendChild(row);
+                });
+            }
+        }
+
+        /* =========================================================================
+           10. SELECTION, CUSTOMIZATION & EDUCATIONAL HUD UPDATER
            ========================================================================= */
         function selectVehicle(vehicleId) {
             if (!VEHICLE_CATALOG[vehicleId]) return;
@@ -2372,13 +3050,18 @@
             currentVehicle = { ...VEHICLE_CATALOG[vehicleId] };
             currentCategory = currentVehicle.type;
 
-            document.getElementById('btn-cat-moto').classList.toggle('active', currentCategory === 'motorcycle');
-            document.getElementById('btn-cat-car').classList.toggle('active', currentCategory === 'car');
-            document.getElementById('active-vehicle-title').textContent = currentVehicle.name;
+            const btnMoto = document.getElementById('btn-cat-moto');
+            const btnCar = document.getElementById('btn-cat-car');
+            if (btnMoto) btnMoto.classList.toggle('active', currentCategory === 'motorcycle');
+            if (btnCar) btnCar.classList.toggle('active', currentCategory === 'car');
+
+            const title = document.getElementById('active-vehicle-title');
+            if (title) title.textContent = currentVehicle.name;
 
             buildProceduralVehicleModel(currentVehicle);
             updateSidebarVehiclePills();
             updateTelemetrySidebar();
+            updateVRWorkspaceUI();
             showToast(`Selected: ${currentVehicle.name}`);
         }
 
@@ -2407,6 +3090,7 @@
 
             buildProceduralVehicleModel(currentVehicle);
             updateTelemetrySidebar();
+            updateVRWorkspaceUI();
 
             // Update Educational Card
             const eduTitle = document.getElementById('edu-title');
@@ -2431,6 +3115,7 @@
 
             buildProceduralVehicleModel(currentVehicle);
             updateTelemetrySidebar();
+            updateVRWorkspaceUI();
             showToast("🔄 Factory Baseline Restored");
         }
 
@@ -2504,6 +3189,7 @@
         function applyVehicleColor(hex) {
             currentVehicle.color = hex;
             buildProceduralVehicleModel(currentVehicle);
+            updateVRWorkspaceUI();
             showToast(`Applied Paint: ${hex}`);
         }
 
@@ -2522,8 +3208,15 @@
             document.getElementById('env-highway').setAttribute('visible', locationKey === 'highway');
             document.getElementById('env-city').setAttribute('visible', locationKey === 'city');
 
+            // Toggle 2D & 3D HUDs
             document.getElementById('driving-hud').classList.toggle('visible', isDriving);
             document.getElementById('drive-controls-guide').style.display = isDriving ? 'flex' : 'none';
+
+            const cockpitHud = document.getElementById('vr-cockpit-hud');
+            if (cockpitHud) cockpitHud.setAttribute('visible', isDriving);
+
+            const vrQuickModeTxt = document.getElementById('vr-btn-quick-mode-text');
+            if (vrQuickModeTxt) vrQuickModeTxt.setAttribute('value', locationKey === 'showroom' ? '🏁 TRACK' : '🏢 GARAGE');
 
             const rig = document.getElementById('rig');
             if (locationKey === 'showroom') {
@@ -2533,7 +3226,7 @@
                     rig.object3D.position.set(0, 1.2, 4.2);
                     rig.object3D.rotation.set(0, 0, 0);
                 }
-                showToast("🏢 Welcome to AeroDyn Garage");
+                showToast("🏢 Welcome to AeroDyn VR Garage");
             } else if (locationKey === 'city') {
                 physics.speed = 0;
                 physics.speedMS = 0;
@@ -2553,7 +3246,8 @@
         function toggleAudioEngine() {
             soundSynth.init();
             soundSynth.enabled = !soundSynth.enabled;
-            document.getElementById('btn-audio').textContent = soundSynth.enabled ? '🔊 AUDIO: ON' : '🔇 AUDIO: OFF';
+            const btnAudio = document.getElementById('btn-audio');
+            if (btnAudio) btnAudio.textContent = soundSynth.enabled ? '🔊 AUDIO: ON' : '🔇 AUDIO: OFF';
             showToast(soundSynth.enabled ? "Engine Sound Enabled" : "Audio Muted");
         }
 
@@ -2569,7 +3263,7 @@
         }
 
         /* =========================================================================
-           9. INFINITE PROCEDURAL CITY ROAD STREAMING ENGINE
+           11. INFINITE PROCEDURAL CITY ROAD STREAMING ENGINE
            ========================================================================= */
         const CITY_CHUNK_SIZE = 100;
         const NUM_CITY_CHUNKS = 8;
@@ -2865,7 +3559,7 @@
         }
 
         /* =========================================================================
-           10. SIMULATION RUNTIME LOOP
+           12. SIMULATION RUNTIME LOOP & WEBXR VR EVENT LISTENERS
            ========================================================================= */
         AFRAME.registerComponent('simulation-loop', {
             init: function () { this.lastTime = performance.now(); },
@@ -2878,8 +3572,22 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             const scene = document.querySelector('a-scene');
-            if (scene) scene.setAttribute('simulation-loop', '');
+            if (scene) {
+                scene.setAttribute('simulation-loop', '');
 
+                // WebXR VR Mode Listeners
+                scene.addEventListener('enter-vr', () => {
+                    inVRMode = true;
+                    showToast("🥽 ENTERED VR MODE: Laser Controls Active");
+                });
+
+                scene.addEventListener('exit-vr', () => {
+                    inVRMode = false;
+                    showToast("🖥️ EXITED VR MODE: Desktop Controls Restored");
+                });
+            }
+
+            buildVRWorkshopKiosk();
             selectVehicle('moto_superbike');
             initInfiniteCityRoad();
 
